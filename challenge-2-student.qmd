@@ -1,10 +1,15 @@
 ---
 title: "Challenge 2: Spicing things up with ggplot2"
-author: "Add your name!"
+author: "Nathan Huang"
 format: html
 editor: source
 embed-resources: true
 code-tools: true
+echo: true
+code-fold: true
+warning: false
+message: false
+self-contained: true
 ---
 
 For this week's Challenge, you will have three different options to explore.
@@ -22,8 +27,15 @@ you would like to include, feel free to toss those in the YAML, too!
 
 Next, create a setup code chunk to load the packages and read in the
 `surveys.csv` data file exactly how you did in Lab 2.
+```{r}
+library(tidyverse)
+library(readr)
+surveys <- read_csv("./data/surveys.csv")
+surveys
+```
 
 Finally, create another code chunk and paste in your code from Question 14 or Question 15 in Lab 2 -- we will be modifying the box plot of weights by species!
+
 
 # Medium: Ridge Plots
 
@@ -36,6 +48,19 @@ for side-by-side density plots using `geom_density()`. Instead, we will need to
 make use of the `ggridges` package to create side-by-side density (ridge) plots.
 
 > **For this challenge you are to change your boxplots to ridge plots. You will need to install the `ggridges` package and explore the `geom_density_ridges()` function.**
+
+```{r}
+library(ggridges)
+(
+  ggplot(data = surveys, 
+         mapping = aes(x = weight, y = species)) +
+    geom_density_ridges(color="steelblue", alpha = .1)+
+    labs(x="Weight", y= "Species", title="Species' Weight") 
+
+)
+
+```
+
 
 # Spicy: Exploring Color Themes
 
@@ -102,6 +127,19 @@ use (e.g. `scale_color_aaas()`).
 
 > **In this challenge you are expected to use this information to modify the boxplots you created Lab 2. First, you are to color the boxplots based on the variable `genus`. Next, you are to change the colors used for `genus` using either manual color specification or any of the packages listed here (or others!).**
 
+```{r}
+(
+  ggplot(data = surveys, 
+         mapping = aes(x = weight, y = species, fill = genus)) +
+    geom_boxplot(outliers = FALSE) +
+    geom_jitter(color="steelblue", alpha = .005) +
+    labs(x="Weight", y= "Species", title="Species' Weight") +
+    scale_fill_manual(values = c("blue", "yellow", "red", "green", "orange", "violet", "brown", "purple"))
+
+)
+```
+
+
 # Hot: Exploring `ggplot2` Annotation
 
 Some data scientists advocate that we should try to eliminate legends from our
@@ -133,6 +171,35 @@ Note that I've labeled the "Sigmodon" and "Perognathus" genera, so the reader
 can tell that these boxplots are associated with their respective genus.
 
 > **In this challenge you are expected to use this information to modify the boxplots you created in Lab 2. First, you are to color the boxplots based on the variable `genus`. Next, you are to add annotations for each genus next to the boxplot(s) associated with that genus. Finally, you are expected to use the `theme()` function to remove the color legend from the plot, since it is no longer needed!**
+
+```{r}
+(
+  ggplot(data = surveys, 
+         mapping = aes(x = weight, y = species, color = genus)) +
+    geom_boxplot() +
+    #geom_jitter(color="steelblue", alpha = .005) +
+    labs(x = "Weight (g)", y = "", subtitle = "by Species and Genera",
+       title = "Rodent Weight") +
+    theme(legend.position = "none") + 
+    scale_color_manual(values = c("blue", "yellow", "red", "green",        "orange", "violet", "brown", "purple")) +
+    annotate("text", y = 14, x = 120, label = "Onychomys") +
+    annotate("text", y = 13, x = 250, label = "Dipodomys") +
+    annotate("text", y = 12, x = 140, label = "Chaetodipus") +
+    annotate("text", y = 11, x = 145, label = "Dipodomys") +
+    annotate("text", y = 10, x = 135, label = "Dipodomys") +
+    annotate("text", y = 9, x = 110, label = "Reithrodontomys") +
+    annotate("text", y = 8, x = 120, label = "Peromyscus") +
+    annotate("text", y = 7, x = 125, label = "Onychomys") +
+    annotate("text", y = 6, x = 200, label = "Sigmodon") +
+    annotate("text", y = 5, x = 95, label = "Reithrodontomys") +
+    annotate("text", y = 4, x = 110, label = "Perognathus") +
+    annotate("text", y = 3, x = 125, label = "Peromyscus") +
+    annotate("text", y = 2, x = 140, label = "Chaetodipus") +
+    annotate("text", y = 1.5, x = 260, label = "Neotoma")
+)
+
+```
+
 
 # Challenge 2 Submission
 
