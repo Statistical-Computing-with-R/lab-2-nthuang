@@ -8,7 +8,7 @@ code-tools: true
 echo: true
 code-fold: true
 warning: false
-theme: cybrg
+message: false
 ---
 
 # Part 1: GitHub Workflow
@@ -66,6 +66,8 @@ In the code chunk below, load in the packages necessary for your analysis. You s
 
 ```{r}
 #| label: setup
+library(tidyverse)
+library(readr)
 
 ```
 
@@ -105,15 +107,16 @@ represent:
 
 ```{r}
 #| label: load-data
-
+surveys <- read_csv("./data/surveys.csv")
+surveys
 ```
 
 **2. What are the dimensions (# of rows and columns) of these data?**
-
+30,463 × 15, given in Column specification
 <!-- You can either write code here or in the code chunk for #1, but I **must** see the code you used to address this question!  -->
 
 **3. What are the data types of the variables in this dataset?**
-
+Doubles and Characters
 <!-- You can either write code here or in the code chunk for #1, but I **must** see the code you used to address this question!  -->
 
 # Exploratory Data Analysis with **`ggplot2`**
@@ -142,6 +145,13 @@ the $x$-axis) and `hindfoot_length` (on the $y$-axis).**
 
 ```{r}
 #| label: scatterplot
+(
+  ggplot(data = surveys, 
+         mapping = aes(x = weight, y = hindfoot_length)) +
+    geom_point(alpha = .5) +
+    facet_wrap("species") + 
+    labs(x="Weight", y= NULL, title="Different Species' Weight vs Hindfoot Length", subtitle="Hindfoot Length")
+)
 
 ```
 
@@ -172,6 +182,14 @@ It takes a larger cognitive load to read text that is rotated. It is common prac
 
 ```{r}
 #| label: boxplot
+(
+  ggplot(data = surveys, 
+         mapping = aes(x = species, y = weight)) +
+    geom_boxplot(outliers = FALSE) +
+    geom_jitter(color="steelblue", alpha = .1) +
+    labs(x="Species", y= "Weight", title="Species' Weight") +
+    theme(axis.text.x = element_text(angle = 45))
+)
 
 
 ```
@@ -219,6 +237,14 @@ Some people (and journals) prefer for boxplots to be stacked with a specific ori
 
 ```{r}
 #| label: rotated-boxplot
+(
+  ggplot(data = surveys, 
+         mapping = aes(x = weight, y = species)) +
+    geom_boxplot(outliers = FALSE) +
+    geom_jitter(color="steelblue", alpha = .1) +
+    labs(x="Weight", y= "Species", title="Species' Weight") 
+
+)
 
 ```
 
@@ -252,13 +278,14 @@ might want to look up the help documentation for `aov()`.
 ```{r}
 #| label: anova
 
-species_mod <- aov()
+species_mod <- aov(weight ~ species, data = surveys)
 
 summary(species_mod)
 ```
 
 **18. Based on the results of the ANOVA F-test, draw a conclusion in context of the hypotheses. Make sure to cite appropriate output from above.**
-
+p-value:2e-16 pretty much 0
+Based on the p-value being basically 0, we can reject the null hypothesis. We can conclude that there is at least one rodent species with a  different population mean weight.
 
 # Lab 2 Submission
 
